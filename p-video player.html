@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="css/font-awesome.min.css"/>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        figure{
+            text-align: center;
+        }
+        .player{
+            width: 1020px;
+            height: 540px;
+            margin: 100px auto;
+            position: relative;
+            background-color: #000;
+            border-radius: 20px;
+        }
+        video{
+            height: 100%;
+        }
+        .controls{
+            width: 900px;
+            height: 60px;
+            background-color: rgba(255, 0, 0, 0.5);
+            position: absolute;
+            left: 30px;
+            bottom: 10px;
+            display: none;
+        }
+        .switch{
+            width: 30px;
+            height: 30px;
+            /*background-color: #fff;*/
+            position: absolute;
+            left: 20px;
+            top: 15px;
+            line-height: 30px;
+            text-align: center;
+        }
+        .progress{
+            width: 600px;
+            height: 10px;
+            background-color: deepskyblue;
+            position: absolute;
+            top: 25px;
+            left: 60px;
+            border-radius: 5px;
+        }
+        .currentProgress{
+            width: 0%;
+            height: 100%;
+            background-color: dimgrey;
+            border-radius: 5px;
+        }
+        .time{
+            width: 100px;
+            height: 20px;
+            position: absolute;
+            left: 680px;
+            top: 20px;
+            line-height: 20px;
+            color: #fff;
+        }
+        .fullscreen{
+            width: 30px;
+            height: 30px;
+            /*background-color: #fff;*/
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            text-align: center;
+            line-height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <figure>
+        <div class="player">
+            <video src="./I Don_t Wanna Live Forever.mp4"></video>
+            <!-- 控制台-->
+            <div class="controls">
+                <!-- 播放暂停键-->
+                <div class="switch icon-play"></div>
+                <!-- 进度条-->
+                <div class="progress">
+                    <!-- 播放当前进度-->
+                    <div class="currentProgress"></div>
+                </div>
+                <!-- 播放时间以及总时间-->
+                <div class="time">
+                    <span class="currentTime">00:00:00</span>/<span class="totalTime">00:00:00</span>
+                </div>
+                <!-- 全屏-->
+                <div class="fullscreen icon-resize-full"></div>
+            </div>
+        </div>
+    </figure>
+
+    <script>
+        /*
+        * 需求：
+        * 1、实现播放按钮的播放暂停效果
+        * 2、当视频加载完成，获取视频的总时长
+        * 3、当视频播放时，动态更新进度条，动态更新播放时间
+        * 4、实现全屏按钮的全屏效果
+        * */
+        var video = document.querySelector('video');
+        var onOff = document.querySelector('.switch');
+        var totalTime = document.querySelector('.totalTime');
+        var currentTime = document.querySelector('.currentTime');
+        var currentProgress = document.querySelector('.currentProgress');
+        var fullscreen = document.querySelector('.fullscreen');
+        var player = document.querySelector('.player');
+        var controls = document.querySelector('.controls');
+        player.onmouseover = function(){
+            controls.style.display = 'block';
+        }
+        player.onmouseleave = function(){
+            controls.style.display = 'none';
+        }
+        /*实现播放按钮的播放暂停效果*/
+        onOff.onclick = function(){
+            if(video.paused){
+                video.play();
+                onOff.classList.remove('icon-play');
+                onOff.classList.add('icon-pause');
+            }else {
+                video.pause();
+                onOff.classList.remove('icon-pause');
+                onOff.classList.add('icon-play');
+            }
+        }
+        /*当视频加载完成，获取视频总时长*/
+        var tTime = 0;
+        video.oncanplay = function(){
+            tTime = video.duration;
+            var h = Math.floor(tTime/3600);
+            var m = Math.floor(tTime%3600/60);
+            var s = Math.floor(tTime%60);
+            h=h>=10?h:'0'+h;
+            m=m>=10?m:'0'+m;
+            s=s>=10?s:'0'+s;
+            totalTime.innerHTML = h+':'+m+':'+s;
+        }
+        /*当视频播放时，动态更新进度条，动态更新播放时间*/
+        video.ontimeupdate = function(){
+            var cTime = video.currentTime;
+            var h = Math.floor(cTime/3600);
+            var m = Math.floor(cTime%3600/60);
+            var s = Math.floor(cTime%60);
+            h=h>=10?h:'0'+h;
+            m=m>=10?m:'0'+m;
+            s=s>=10?s:'0'+s;
+            currentTime.innerHTML = h+':'+m+':'+s;
+            /*更新进度条*/
+            currentProgress.style.width = cTime/tTime * 100 +"%";
+        }
+        /*实现全屏按钮的全屏效果*/
+        fullscreen.onclick = function(){
+            video.webkitRequestFullScreen();
+        }
+    </script>
+</body>
+</html>
